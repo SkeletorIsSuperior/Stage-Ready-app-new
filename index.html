@@ -73,7 +73,14 @@
 
   <script>
     // 1. Define your departments (edit this list to match your theater)
-    const departments = ["Lights", "Sound", "Props", "Set", "Actors"];
+    c// These three are controlled together by one checkbox
+const grouped = ["Lights", "Sound", "Set"];
+
+// These still get their own individual toggle buttons
+const soloDepartments = ["Props", "Actors"];
+
+// The full list used for the "is everything ready?" check
+const allDepartments = [...grouped, ...soloDepartments];
 
     // 2. Track the state of each one
     const state = {};
