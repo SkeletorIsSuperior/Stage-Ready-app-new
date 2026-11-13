@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stage Ready</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 { margin-bottom: 5px; }
+    .subtitle { color: #aaa; margin-bottom: 25px; font-size: 14px; }
+    .checklist { max-width: 400px; margin: 0 auto; }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a2a2a;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      font-size: 18px;
+    }
+    button.toggle {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      background: #555;
+      color: white;
+      cursor: pointer;
+      min-width: 90px;
+    }
+    button.toggle.ready { background: #2ecc71; }
+    #status {
+      margin-top: 25px;
+      font-size: 28px;
+      font-weight: bold;
+      padding: 20px;
+      border-radius: 10px;
+      background: #333;
+      transition: background 0.3s;
+    }
+    #status.ready { background: #2ecc71; color: #000; }
+    #reset {
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-size: 16px;
+      border: 2px solid #888;
+      background: transparent;
+      color: #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Stage Ready</h1>
+  <p class="subtitle">Tap each item when it's set</p>
+
+  <div class="checklist" id="checklist">
+    <!-- Items get inserted here by JavaScript -->
+  </div>
+
+  <div id="status">NOT READY</div>
+  <button id="reset">Reset All</button>
+
+  <script>
+    // 1. Define your departments (edit this list to match your theater)
+    const departments = ["Lights", "Sound", "Props", "Set", "Actors"];
+
+    // 2. Track the state of each one
+    const state = {};
+    departments.forEach(d => state[d] = false);
+
+    // 3. Build the checklist UI from the list
+    const checklist = document.getElementById("checklist");
+    departments.forEach(name => {
+      const row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML = `
+        <span>${name}</span>
+        <button class="toggle" data-name="${name}">Set</button>
+      `;
+      checklist.appendChild(row);
+    });
+
+    // 4. Handle button clicks
+    document.querySelectorAll(".toggle").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const name = btn.dataset.name;
+        state[name] = !state[name];               // flip the state
+        btn.classList.toggle("ready", state[name]);
+        btn.textContent = state[name] ? "✓ Ready" : "Set";
+        updateStatus();
+      });
+    });
+
+    // 5. Check if everything is ready
+    function updateStatus() {
+      const allReady = departments.every(d => state[d]);
+      const statusEl = document.getElementById("status");
+      if (allReady) {
+        statusEl.textContent = "✅ STAGE READY";
+        statusEl.classList.add("ready");
+      } else {
+        statusEl.textContent = "NOT READY";
+        statusEl.classList.remove("ready");
+      }
+    }
+
+    // 6. Reset button
+    document.getElementById("reset").addEventListener("click", () => {
+      departments.forEach(d => state[d] = false);
+      document.querySelectorAll(".toggle").forEach(btn => {
+        btn.classList.remove("ready");
+        btn.textContent = "Set";
+      });
+      updateStatus();
+    });
+  </script>
+
+</body>
+</html>
